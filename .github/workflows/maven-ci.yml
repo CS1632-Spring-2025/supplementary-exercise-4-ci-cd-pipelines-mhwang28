@@ -74,6 +74,7 @@ jobs:
       uses: advanced-security/maven-dependency-submission-action@v3
 
   build:
+    needs: [maven_test]
     name: Build and analyze
     runs-on: ubuntu-latest
     steps:
@@ -85,11 +86,11 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu' # Alternative distribution options are available.
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
+      - name: Restore cached build
+        uses: actions/cache@v3
         with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
+          key: cached-build-${{github.sha}}
+          path: .
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
         uses: actions/cache@v4
